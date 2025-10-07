@@ -19,10 +19,9 @@
         <div class="right-panel">
             <h2>Login</h2>
             <form action="verificar_login.php" method="POST">
-                <?php if (isset($_GET['erro'])): ?>
-                    <div class="alert erro"><?php echo $_GET['erro']; ?></div>
+                <?php if (isset($_GET['sucesso'])): ?>
+                    <div class="alert sucesso"><?php echo $_GET['sucesso']; ?></div>
                 <?php endif; ?>
-
                 <?php if (isset($_GET['sucesso'])): ?>
                     <div class="alert sucesso"><?php echo $_GET['sucesso']; ?></div>
                 <?php endif; ?>
