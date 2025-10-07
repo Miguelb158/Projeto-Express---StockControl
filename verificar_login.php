@@ -15,11 +15,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $usuario = $resultado->fetch_assoc();
 
         if (password_verify($senha, $usuario['senha'])) {
-            // guarda o cargo e login na sessão
+            
             $_SESSION['login'] = $usuario['login'];
             $_SESSION['cargo'] = $usuario['cargo'];
 
-            // redireciona conforme o cargo
+            
             if ($usuario['cargo'] == 'admin') {
                 header("Location: inicio.php");
             } else {

@@ -5,7 +5,7 @@ error_reporting(E_ALL);
 $mensagem = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    include('conexao.php'); // deve definir $conexao = new mysqli(...)
+    include('conexao.php'); 
 
     $cargo = $_POST['cargo'];
     $login = $_POST['login'];
