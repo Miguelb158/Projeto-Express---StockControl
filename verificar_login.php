@@ -1,38 +1,36 @@
 <?php
 session_start();
-include("conexao.php");
+include('conexao.php');
 
-$login = $_POST['login'];
-$senha = $_POST['senha'];
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $login = $_POST['login'];
+    $senha = $_POST['senha'];
 
-$sql = "SELECT * FROM usuarios WHERE login = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("s", $login);
-$stmt->execute();
-$result = $stmt->get_result();
+    $sql = $conn ->prepare("SELECT * FROM usuarios WHERE login = ?");
+    $sql->bind_param("s", $login);
+    $sql->execute();
+    $resultado = $sql->get_result();
 
-if ($result->num_rows > 0) {
-    $usuario = $result->fetch_assoc();
+    if ($resultado->num_rows > 0) {
+        $usuario = $resultado->fetch_assoc();
 
-    if (password_verify($senha, $usuario['senha'])) {
-        $_SESSION['id'] = $usuario['id'];
-        $_SESSION['login'] = $usuario['login'];
-        $_SESSION['cargo'] = $usuario['cargo'];
+        if (password_verify($senha, $usuario['senha'])) {
+            // guarda o cargo e login na sessão
+            $_SESSION['login'] = $usuario['login'];
+            $_SESSION['cargo'] = $usuario['cargo'];
 
-        if ($usuario['cargo'] === 'admin') {
-            header("Location: inicio.php");
-        } elseif ($usuario['cargo'] === 'funcionario') {
-            header("Location: inicio.php");
+            // redireciona conforme o cargo
+            if ($usuario['cargo'] == 'admin') {
+                header("Location: inicio.php");
+            } else {
+                header("Location: inicio.php");
+            }
+            exit;
         } else {
-            header("Location: login.php?erro=Cargo desconhecido.");
+            echo "Senha incorreta!";
         }
-        exit;
     } else {
-        header("Location: login.php?erro=Senha incorreta!");
-        exit;
+        echo "Usuário não encontrado!";
     }
-} else {
-    header("Location: login.php?erro=Usuário não encontrado!");
-    exit;
 }
 ?>

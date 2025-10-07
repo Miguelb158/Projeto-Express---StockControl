@@ -18,11 +18,6 @@
         </div>
         <div class="right-panel">
             <h2>Login</h2>
-            <div class="social-icons">
-                <button>f</button>
-                <button>G+</button>
-                <button>in</button>
-            </div>
             <form action="verificar_login.php" method="POST">
                 <?php if (isset($_GET['erro'])): ?>
                     <div class="alert erro"><?php echo $_GET['erro']; ?></div>

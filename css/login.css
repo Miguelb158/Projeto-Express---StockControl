@@ -28,13 +28,14 @@ body {
   color: white;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content:start;
   align-items: center;
   text-align: center;
   padding: 20px;
 }
 
 .left-panel .logo {
+  margin-top: 36px;
   width: 70px;
   margin-bottom: 15px;
 }
