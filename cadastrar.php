@@ -69,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       <img id="logo" src="./img/logo.png" alt="Logo" class="logo">
       <h2>Cadastre-se agora</h2>
       <p>Já tem uma conta?<br>Clique abaixo para logar</p>
-      <a href="login.php"><button class="btn-voltar">Voltar</button></a>
+      <a href="index.php"><button class="btn-voltar">Voltar</button></a>
     </div>
   </div>
 </body>
