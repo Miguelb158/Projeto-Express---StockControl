@@ -1,0 +1,138 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    display: flex;
+    height: 100vh;
+}
+
+/* ======= BARRA LATERAL ======= */
+.sidebar {
+    width: 220px;
+    background-color: #076531;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 0;
+    transition: width 0.3s ease;
+    overflow: hidden;
+}
+
+/* Quando o mouse não estiver sobre a barra */
+.sidebar:hover {
+    width: 220px;
+}
+
+.sidebar:not(:hover) {
+    width: 70px;
+}
+
+/* ======= CONTEÚDO DO TOPO ======= */
+#DIVELOGO {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+#logo {
+    width: 50px;
+    margin-bottom: 40px;
+    transition: width 0.3s ease;
+}
+
+.sidebar:hover #logo {
+    width: 120px;
+}
+
+/* ======= MENU ======= */
+.menu {
+    list-style: none;
+    width: 100%;
+}
+
+.menu li {
+    width: 100%;
+}
+
+.menu a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px;
+    text-decoration: none;
+    color: white;
+    font-size: 16px;
+    transition: background 0.3s, padding 0.3s;
+    white-space: nowrap;
+}
+
+.menu a:hover {
+    background-color: #088b43;
+}
+
+.icone {
+    width: 24px;
+    flex-shrink: 0;
+}
+
+/* ======= ESCONDE TEXTO QUANDO ENCOLHIDO ======= */
+.sidebar:not(:hover) .menu a span,
+.sidebar:not(:hover) .menu a {
+    justify-content: center;
+}
+
+.sidebar:not(:hover) .menu a {
+    padding: 12px 0;
+}
+
+/* Truque para esconder o texto */
+.sidebar:not(:hover) a {
+    text-indent: -9999px;
+        gap: 0px;
+}
+
+.sidebar:not(:hover) a .icone {
+    text-indent: 0;
+}
+
+.sidebar:hover a {
+    text-indent: 0;
+}
+
+/* ======= BOTÃO SAIR ======= */
+#sair {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: rgb(230, 79, 79);
+    text-decoration: none;
+    font-weight: bold;
+    padding-bottom: 20px;
+    width: 100%;
+    transition: color 0.3s;
+}
+
+#sair:hover {
+    color: #ff9b9b;
+}
+
+/* ======= CONTEÚDO PRINCIPAL ======= */
+.conteudo {
+    flex: 1;
+    background-color: #f2f2f2;
+    padding: 30px;
+}
+
+.conteudo h1 {
+    color: #30b16a;
+    font-size: 28px;
+    margin-bottom: 20px;
+}
