@@ -48,7 +48,7 @@ if (!$resultado) {
     <!-- Conteúdo -->
     <main class="conteudo">
         <header class="topo">
-            <h1>📦 Estoque</h1>
+            <h1>Estoque</h1>
             <div class="usuario-info">
                 <strong><?= htmlspecialchars($usuario_nome) ?></strong><br>
                 <small><?= htmlspecialchars($usuario_email) ?></small>
@@ -56,14 +56,26 @@ if (!$resultado) {
         </header>
 
         <section class="painel-estoque">
-            <div class="botoes-superior">
-                <input type="text" placeholder="🔍 Pesquisar item..." id="campo-pesquisa">
-                <button class="btn-filtrar">Filtrar 🔽</button>
+           <div class="botoes-superior">
+                <!-- Campo de pesquisa com ícone de background -->
+                <input type="text" placeholder="Pesquisar item..." id="campo-pesquisa" class="input-pesquisa">
+                <!-- Botão Filtrar com dropdown -->
+                <div class="dropdown-filtrar">
+                    <button class="btn-filtrar" id="btn-filtrar">
+                        Filtrar
+                        <img src="./img/Filtro.png" alt="Filtrar" class="icone-btn">
+                    </button>
+                    <div class="dropdown-content" id="dropdown-categorias">
+                        <!-- Categorias serão inseridas pelo JS -->
+                    </div>
+                </div>
+
 
                 <?php if ($usuario_tipo === 'admin'): ?>
                     <button class="btn-novo">+ Novo Item</button>
                 <?php endif; ?>
             </div>
+
 
             <div class="tabela-wrapper">
                 <table class="tabela-estoque">
@@ -90,7 +102,7 @@ if (!$resultado) {
                                         <a href="ver_item.php?id=<?= $item['id'] ?>" title="Ver"><img src="./img/olho.png" alt="Ver"></a>
                                         <?php if ($usuario_tipo === 'admin'): ?>
                                             <a href="editar_item.php?id=<?= $item['id'] ?>" title="Editar"><img src="./img/editar.png" alt="Editar"></a>
-                                            <a href="excluir_item.php?id=<?= $item['id'] ?>" title="Excluir" onclick="return confirm('Deseja realmente excluir este item?')"><img src="./img/lixeira.png" alt="Excluir"></a>
+                                            <a href="excluir_item.php?id=<?= $item['id'] ?>" title="Excluir" onclick="return confirm('Deseja realmente excluir este item?')"><img src="./img/lixo.png" alt="Excluir"></a>
                                         <?php endif; ?>
                                     </td>
                                 </tr>
@@ -174,6 +186,100 @@ if (!$resultado) {
 
     </main>
 </div>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const inputPesquisa = document.getElementById("campo-pesquisa");
+    const btnFiltrar = document.querySelector(".btn-filtrar");
+    const tabela = document.querySelector(".tabela-estoque tbody");
+    const linhas = tabela.querySelectorAll("tr");
+
+    function filtrarTabela() {
+        const filtro = inputPesquisa.value.toLowerCase();
+
+        linhas.forEach(linha => {
+            // Ignora linhas de "Nenhum item encontrado"
+            if (linha.cells.length === 1) return;
+
+            const codigo = linha.cells[0].textContent.toLowerCase();
+            const categoria = linha.cells[1].textContent.toLowerCase();
+            const nome = linha.cells[2].textContent.toLowerCase();
+
+            if (codigo.includes(filtro) || categoria.includes(filtro) || nome.includes(filtro)) {
+                linha.style.display = "";
+            } else {
+                linha.style.display = "none";
+            }
+        });
+    }
+
+    // Filtrar ao digitar
+    inputPesquisa.addEventListener("keyup", filtrarTabela);
+
+    // Filtrar ao clicar no botão
+    btnFiltrar.addEventListener("click", filtrarTabela);
+});
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const tabela = document.querySelector(".tabela-estoque tbody");
+    const linhas = Array.from(tabela.querySelectorAll("tr")).filter(l => l.cells.length > 1); // ignora mensagem "nenhum item"
+    
+    const btnFiltrar = document.getElementById("btn-filtrar");
+    const dropdown = document.getElementById("dropdown-categorias");
+
+    // Criar lista de categorias com soma de quantidades
+    const categoriasMap = {};
+    linhas.forEach(linha => {
+        const categoria = linha.cells[1].textContent;
+        const quantidade = parseInt(linha.cells[3].textContent);
+        if (!categoriasMap[categoria]) categoriasMap[categoria] = 0;
+        categoriasMap[categoria] += quantidade;
+    });
+
+    // Ordenar categorias por quantidade descendente
+    const categoriasOrdenadas = Object.entries(categoriasMap).sort((a,b) => b[1] - a[1]);
+
+    // Popular dropdown
+    categoriasOrdenadas.forEach(([categoria, total]) => {
+        const div = document.createElement("div");
+        div.textContent = `${categoria} (${total})`;
+        div.dataset.categoria = categoria;
+        dropdown.appendChild(div);
+    });
+
+    // Mostrar/ocultar dropdown ao clicar no botão
+    btnFiltrar.addEventListener("click", () => {
+        dropdown.classList.toggle("show");
+    });
+
+    // Filtrar tabela ao selecionar categoria
+    dropdown.addEventListener("click", (e) => {
+        const categoriaSelecionada = e.target.dataset.categoria;
+        if (!categoriaSelecionada) return;
+
+        // Ocultar todas as linhas
+        linhas.forEach(linha => linha.style.display = "none");
+
+        // Exibir apenas itens da categoria selecionada, ordenados por quantidade descendente
+        const itensFiltrados = linhas
+            .filter(l => l.cells[1].textContent === categoriaSelecionada)
+            .sort((a,b) => parseInt(b.cells[3].textContent) - parseInt(a.cells[3].textContent));
+
+        itensFiltrados.forEach(linha => linha.style.display = "");
+
+        dropdown.classList.remove("show");
+    });
+
+    // Fechar dropdown ao clicar fora
+    window.addEventListener("click", (e) => {
+        if (!btnFiltrar.contains(e.target) && !dropdown.contains(e.target)) {
+            dropdown.classList.remove("show");
+        }
+    });
+});
+</script>
+
+
 </body>
 </html>
 
