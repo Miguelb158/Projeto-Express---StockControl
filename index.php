@@ -4,15 +4,15 @@ session_start();
 
 $mensagem = '';
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $email = trim($_POST['email']); // agora corresponde ao input
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $email = trim($_POST['email']);
     $senha = trim($_POST['senha']);
 
     if (empty($email) || empty($senha)) {
         $mensagem = "⚠️ Preencha todos os campos!";
     } else {
         // Prepara a consulta de forma segura
-        $stmt = $conn->prepare("SELECT * FROM usuarios WHERE email = ?");
+        $stmt = $conn->prepare("SELECT id, nome, email, senha, tipo FROM usuarios WHERE email = ?");
         if (!$stmt) {
             die("Erro ao preparar consulta: " . $conn->error);
         }
@@ -25,12 +25,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $usuario = $resultado->fetch_assoc();
 
             if (password_verify($senha, $usuario['senha'])) {
-                // Login bem-sucedido
+                // Login bem-sucedido → cria variáveis de sessão
                 $_SESSION['usuario_id'] = $usuario['id'];
                 $_SESSION['usuario_nome'] = $usuario['nome'];
                 $_SESSION['usuario_email'] = $usuario['email'];
-                $_SESSION['usuario_tipo'] = $usuario['tipo'];
+                $_SESSION['usuario_tipo'] = $usuario['tipo']; // admin ou funcionario
 
+                // Redireciona para o painel principal
                 header("Location: inicio.php");
                 exit;
             } else {
@@ -84,4 +85,3 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div>
 </body>
 </html>
-
