@@ -69,14 +69,8 @@ if (!$resultado) {
                         <!-- Categorias serão inseridas pelo JS -->
                     </div>
                 </div>
-
-
-                <?php if ($usuario_tipo === 'admin'): ?>
-                    <button class="btn-novo">+ Novo Item</button>
-                <?php endif; ?>
+                <button class="btn-novo">+ Novo Item</button>
             </div>
-
-
             <div class="tabela-wrapper">
                 <table class="tabela-estoque">
                     <thead>
