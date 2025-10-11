@@ -101,8 +101,24 @@ if (!$resultado) {
                                     <td class="acoes">
                                         <a href="ver_item.php?id=<?= $item['id'] ?>" title="Ver"><img src="./img/olho.png" alt="Ver"></a>
                                         <?php if ($usuario_tipo === 'admin'): ?>
-                                            <a href="editar_item.php?id=<?= $item['id'] ?>" title="Editar"><img src="./img/editar.png" alt="Editar"></a>
-                                            <a href="excluir_item.php?id=<?= $item['id'] ?>" title="Excluir" onclick="return confirm('Deseja realmente excluir este item?')"><img src="./img/lixo.png" alt="Excluir"></a>
+                                            <a href="#" 
+                                                class="btn-editar" 
+                                                data-id="<?= $item['id'] ?>" 
+                                                data-nome="<?= htmlspecialchars($item['nome']) ?>" 
+                                                data-codigo="<?= htmlspecialchars($item['codigo']) ?>" 
+                                                data-categoria="<?= htmlspecialchars($item['categoria']) ?>" 
+                                                data-quantidade="<?= htmlspecialchars($item['quantidade']) ?>" 
+                                                data-localizacao="<?= htmlspecialchars($item['localizacao']) ?>" 
+                                                title="Editar">
+                                                <img src="./img/editar.png" alt="Editar">
+                                            </a>
+                                            <a href="#" 
+                                                class="btn-excluir" 
+                                                data-id="<?= $item['id'] ?>" 
+                                                data-nome="<?= htmlspecialchars($item['nome']) ?>" 
+                                                title="Excluir">
+                                                <img src="./img/lixo.png" alt="Excluir">
+                                            </a>
                                         <?php endif; ?>
                                     </td>
                                 </tr>
@@ -159,6 +175,109 @@ if (!$resultado) {
         </div>
         </div>
         <!-- ===== FIM MODAL NOVO ITEM ===== -->
+        <!-- ===== MODAL EDITAR ITEM ===== -->
+            <div id="modalEditarItem" class="modal">
+            <div class="modal-content">
+                <span class="fechar fechar-editar">&times;</span>
+                <h2>✏️ Editar Item</h2>
+                <form id="formEditarItem" method="POST" action="editar_item_salvar.php">
+                <input type="hidden" name="id" id="edit-id">
+
+                <div class="grupo-input">
+                    <label>Nome do Item</label>
+                    <input type="text" name="nome" id="edit-nome" required>
+                </div>
+
+                <div class="grupo-input">
+                    <label>Código</label>
+                    <input type="text" name="codigo" id="edit-codigo" required>
+                </div>
+
+                <div class="grupo-input">
+                    <label>Categoria</label>
+                    <input type="text" name="categoria" id="edit-categoria">
+                </div>
+
+                <div class="grupo-input">
+                    <label>Quantidade</label>
+                    <input type="number" name="quantidade" id="edit-quantidade" min="0">
+                </div>
+
+                <div class="grupo-input">
+                    <label>Localização</label>
+                    <select name="localizacao" id="edit-localizacao" required>
+                    <option value="Setor A">Setor A</option>
+                    <option value="Setor B">Setor B</option>
+                    <option value="Setor C">Setor C</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-salvar">Salvar Alterações</button>
+                </form>
+            </div>
+            </div>
+            <!-- ===== FIM MODAL EDITAR ITEM ===== -->
+             <script>
+document.addEventListener("DOMContentLoaded", function() {
+    const botoesExcluir = document.querySelectorAll(".btn-excluir");
+
+    botoesExcluir.forEach(botao => {
+        botao.addEventListener("click", function(e) {
+            e.preventDefault();
+            const id = this.dataset.id;
+            const nome = this.dataset.nome;
+            const linha = this.closest("tr");
+
+            Swal.fire({
+                title: "Tem certeza?",
+                text: `Deseja excluir o item "${nome}"?`,
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Sim, excluir",
+                cancelButtonText: "Cancelar"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch("excluir_item.php", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                        body: "id=" + encodeURIComponent(id)
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire({
+                                icon: "success",
+                                title: "Item excluído!",
+                                text: `"${nome}" foi removido com sucesso.`,
+                                showConfirmButton: false,
+                                timer: 1800
+                            });
+                            linha.remove(); // remove a linha da tabela
+                        } else {
+                            Swal.fire({
+                                icon: "error",
+                                title: "Erro ao excluir",
+                                text: data.error || "Não foi possível excluir o item."
+                            });
+                        }
+                    })
+                    .catch(() => {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Erro de conexão",
+                            text: "Não foi possível comunicar com o servidor."
+                        });
+                    });
+                }
+            });
+        });
+    });
+});
+</script>
+
+
         <script>
         document.addEventListener("DOMContentLoaded", function() {
             const modal = document.getElementById("modalNovoItem");
@@ -183,7 +302,41 @@ if (!$resultado) {
             }
         });
         </script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                // ======== MODAL EDITAR ITEM ========
+                const modalEditar = document.getElementById("modalEditarItem");
+                const fecharEditar = document.querySelector(".fechar-editar");
 
+                document.querySelectorAll(".btn-editar").forEach(btn => {
+                    btn.addEventListener("click", (e) => {
+                        e.preventDefault();
+
+                        // Preenche os campos do modal com os dados do botão
+                        document.getElementById("edit-id").value = btn.dataset.id;
+                        document.getElementById("edit-nome").value = btn.dataset.nome;
+                        document.getElementById("edit-codigo").value = btn.dataset.codigo;
+                        document.getElementById("edit-categoria").value = btn.dataset.categoria;
+                        document.getElementById("edit-quantidade").value = btn.dataset.quantidade;
+                        document.getElementById("edit-localizacao").value = btn.dataset.localizacao;
+
+                        // Mostra o modal
+                        modalEditar.style.display = "flex";
+                    });
+                });
+
+                // Fechar modal ao clicar no X
+                fecharEditar.addEventListener("click", () => {
+                    modalEditar.style.display = "none";
+                });
+
+                // Fechar modal ao clicar fora
+                window.addEventListener("click", (e) => {
+                    if (e.target === modalEditar) modalEditar.style.display = "none";
+                });
+            });
+            </script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     </main>
 </div>
 <script>
