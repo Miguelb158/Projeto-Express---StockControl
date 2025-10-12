@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 11/10/2025 às 19:39
+-- Tempo de geração: 12/10/2025 às 22:05
 -- Versão do servidor: 10.4.32-MariaDB
 -- Versão do PHP: 8.0.30
 
@@ -24,6 +24,28 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+-- Estrutura para tabela `comentarios`
+--
+
+CREATE TABLE `comentarios` (
+  `id` int(11) NOT NULL,
+  `item_id` int(11) NOT NULL,
+  `usuario_id` int(11) DEFAULT NULL,
+  `texto` text NOT NULL,
+  `criado_em` datetime DEFAULT current_timestamp(),
+  `atualizado_em` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Despejando dados para a tabela `comentarios`
+--
+
+INSERT INTO `comentarios` (`id`, `item_id`, `usuario_id`, `texto`, `criado_em`, `atualizado_em`) VALUES
+(2, 3, 3, 'gogo', '2025-10-12 17:04:20', '2025-10-12 17:04:20');
+
+-- --------------------------------------------------------
+
+--
 -- Estrutura para tabela `entradas`
 --
 
@@ -35,6 +57,17 @@ CREATE TABLE `entradas` (
   `responsavel_id` int(11) DEFAULT NULL,
   `observacoes` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Despejando dados para a tabela `entradas`
+--
+
+INSERT INTO `entradas` (`id`, `item_id`, `quantidade`, `data_entrada`, `responsavel_id`, `observacoes`) VALUES
+(1, 2, 80, '2025-10-11 16:03:32', 3, ''),
+(2, 3, 80, '2025-10-11 16:12:57', 3, ''),
+(3, 6, 10, '2025-10-11 16:44:54', 3, ''),
+(4, 9, 100, '2025-10-11 20:27:12', 3, ''),
+(5, 10, 130, '2025-10-11 20:32:24', 4, '');
 
 -- --------------------------------------------------------
 
@@ -51,6 +84,17 @@ CREATE TABLE `historico` (
   `data_movimentacao` datetime DEFAULT current_timestamp(),
   `observacoes` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Despejando dados para a tabela `historico`
+--
+
+INSERT INTO `historico` (`id`, `tipo`, `item_id`, `quantidade`, `responsavel_id`, `data_movimentacao`, `observacoes`) VALUES
+(1, 'entrada', 2, 80, 3, '2025-10-11 16:03:32', ''),
+(2, 'entrada', 3, 80, 3, '2025-10-11 16:12:57', ''),
+(3, 'entrada', 6, 10, 3, '2025-10-11 16:44:54', ''),
+(4, 'entrada', 9, 100, 3, '2025-10-11 20:27:12', ''),
+(5, 'entrada', 10, 130, 4, '2025-10-11 20:32:24', '');
 
 -- --------------------------------------------------------
 
@@ -70,6 +114,17 @@ CREATE TABLE `itens` (
   `criado_em` datetime DEFAULT current_timestamp(),
   `atualizado_em` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Despejando dados para a tabela `itens`
+--
+
+INSERT INTO `itens` (`id`, `codigo`, `nome`, `categoria`, `quantidade`, `localizacao`, `observacoes`, `criado_por`, `criado_em`, `atualizado_em`) VALUES
+(2, '001', 'Cadeira japonesa', 'Cadeira', 84, 'Setor A', '', 3, '2025-10-11 16:03:32', '2025-10-11 20:26:37'),
+(3, '002', 'Mesa Japonesa', 'Mesa', 80, 'Setor C', '', 3, '2025-10-11 16:12:57', '2025-10-11 16:12:57'),
+(6, '003', 'Mesa Japonesa Grande', 'Mesa', 10, 'Setor B', '', 3, '2025-10-11 16:44:54', '2025-10-11 16:44:54'),
+(9, '005', 'Craft Tabel', 'Bancada', 100, 'Setor C', '', 3, '2025-10-11 20:27:12', '2025-10-11 20:27:12'),
+(10, '006', 'BackDeck', 'Bancada', 130, 'Setor A', '', 4, '2025-10-11 20:32:24', '2025-10-11 20:32:24');
 
 -- --------------------------------------------------------
 
@@ -108,11 +163,20 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`id`, `nome`, `email`, `senha`, `tipo`, `criado_em`, `atualizado_em`) VALUES
-(3, 'murilo', 'koba@gmail.com', '$2y$10$GdSH58A1NPl5Jc3cOODMxeJrWW3otAGgOd3cuKILrWMcdGpDqOcIW', 'admin', '2025-10-11 14:30:34', '2025-10-11 14:30:34');
+(3, 'murilo', 'koba@gmail.com', '$2y$10$GdSH58A1NPl5Jc3cOODMxeJrWW3otAGgOd3cuKILrWMcdGpDqOcIW', 'admin', '2025-10-11 14:30:34', '2025-10-11 14:30:34'),
+(4, 'Cachorro', 'kobas@gmail.com', '$2y$10$feMuAKW/Q0ErQV4WdGwjIuNJC0G2uL7kMJ4241raB8RgCVQmBLWzC', 'funcionario', '2025-10-11 20:29:32', '2025-10-11 20:29:32');
 
 --
 -- Índices para tabelas despejadas
 --
+
+--
+-- Índices de tabela `comentarios`
+--
+ALTER TABLE `comentarios`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `usuario_id` (`usuario_id`),
+  ADD KEY `idx_item_id` (`item_id`);
 
 --
 -- Índices de tabela `entradas`
@@ -158,22 +222,28 @@ ALTER TABLE `usuarios`
 --
 
 --
+-- AUTO_INCREMENT de tabela `comentarios`
+--
+ALTER TABLE `comentarios`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
 -- AUTO_INCREMENT de tabela `entradas`
 --
 ALTER TABLE `entradas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de tabela `historico`
 --
 ALTER TABLE `historico`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de tabela `itens`
 --
 ALTER TABLE `itens`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT de tabela `saidas`
@@ -185,11 +255,18 @@ ALTER TABLE `saidas`
 -- AUTO_INCREMENT de tabela `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Restrições para tabelas despejadas
 --
+
+--
+-- Restrições para tabelas `comentarios`
+--
+ALTER TABLE `comentarios`
+  ADD CONSTRAINT `comentarios_ibfk_1` FOREIGN KEY (`item_id`) REFERENCES `itens` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `comentarios_ibfk_2` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE SET NULL;
 
 --
 -- Restrições para tabelas `entradas`
