@@ -325,7 +325,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         document.getElementById("edit-id").value = btn.dataset.id;
                         document.getElementById("edit-nome").value = btn.dataset.nome;
                         document.getElementById("edit-codigo").value = btn.dataset.codigo;
-                        document.getElementById("edit-categoria").value = item.categoria;
+                        document.getElementById("edit-categoria").value = btn.dataset.categoria;
                         document.getElementById("edit-quantidade").value = btn.dataset.quantidade;
                         document.getElementById("edit-localizacao").value = btn.dataset.localizacao;
 

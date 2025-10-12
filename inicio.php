@@ -53,7 +53,7 @@ while ($linha = $resultado->fetch_assoc()) {
                     <li><a href="#"><img class="icone" src="./img/casa.png" alt=""> Início</a></li>
                     <li><a href="./estoque.php"><img class="icone" src="./img/caixa-aberta.png" alt=""> Estoque</a></li>
                     <li><a href="#"><img class="icone" src="./img/do-utilizador.png" alt=""> Novo usuário</a></li>
-                    <li><a href="#"><img class="icone" src="./img/prancheta.png" alt=""> Histórico</a></li>
+                    <li><a href="./hisorico.php"><img class="icone" src="./img/prancheta.png" alt=""> Histórico</a></li>
                 </ul>
                 
             </DIv>
