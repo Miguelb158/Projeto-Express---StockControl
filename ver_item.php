@@ -244,6 +244,9 @@ if ($stmt_com) {
                         <th>Tipo</th>
                         <th>Qtd.</th>
                         <th>Responsável</th>
+                        <?php if ($usuario_tipo === 'admin'): ?>
+                            <th>Ações</th>
+                        <?php endif; ?>
                     </tr>
                 </thead>
                 <tbody>
@@ -253,11 +256,44 @@ if ($stmt_com) {
                             <td><?= ucfirst($row['tipo']) ?></td>
                             <td><?= $row['quantidade'] ?></td>
                             <td><?= htmlspecialchars($row['responsavel'] ?? '---') ?></td>
+                            <?php if ($usuario_tipo === 'admin'): ?>
+                                <td>
+                                    <a href="#" 
+                                    class="btn-editar-historico" 
+                                    data-id="<?= $row['id'] ?>"
+                                    data-tipo="<?= $row['tipo'] ?>"
+                                    data-quantidade="<?= $row['quantidade'] ?>"
+                                    title="Editar entrada/saída">
+                                    <img src="./img/editar.png" alt="Editar">
+                                    </a>
+                                </td>
+                            <?php endif; ?>
                         </tr>
                     <?php endwhile; ?>
                 </tbody>
             </table>
+            <!-- ===== MODAL EDITAR MOVIMENTAÇÃO ===== -->
+            <div id="modalEditarHistorico" class="modal">
+                <div class="modal-content">
+                    <span class="fechar editar-historico-close">&times;</span>
+                    <h3>Editar Movimentação</h3>
+                    <form id="formEditarHistorico" method="POST" action="editar_historico.php">
+                        <input type="hidden" name="id" id="edit-historico-id">
 
+                        <label for="edit-tipo">Tipo:</label>
+                        <select id="edit-tipo" name="tipo" required>
+                            <option value="entrada">Entrada</option>
+                            <option value="saida">Saída</option>
+                        </select>
+
+                        <label for="edit-quantidade">Quantidade:</label>
+                        <input type="number" id="edit-quantidade" name="quantidade" min="1" required>
+
+                        <button type="submit">Salvar Alterações</button>
+                    </form>
+                </div>
+            </div>
+            <!-- ===== MODAL EDITAR MOVIMENTAÇÃO ===== -->
             <div class="qtd-atual">Qtd. atual: <?= htmlspecialchars($item['quantidade']) ?></div>
         </section>
 
@@ -276,7 +312,7 @@ if ($stmt_com) {
                     <?php endwhile; ?>
                 <?php else: ?>
                     <div class="box-observacao">
-                        <p>Nenhum comentário ainda. Seja o primeiro a comentar.</p>
+                        <p>Nenhum comentário.</p>
                     </div>
                 <?php endif; ?>
             </div>
@@ -299,6 +335,35 @@ const span = document.querySelector('.modal .close');
 btn.onclick = () => modal.style.display = 'block';
 span.onclick = () => modal.style.display = 'none';
 window.onclick = (e) => { if (e.target == modal) modal.style.display = 'none'; }
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+    const modalEditarHist = document.getElementById("modalEditarHistorico");
+    const fecharEditarHist = document.querySelector(".editar-historico-close");
+
+    document.querySelectorAll(".btn-editar-historico").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+            e.preventDefault();
+
+            // Preenche os campos do modal
+            document.getElementById("edit-historico-id").value = btn.dataset.id;
+            document.getElementById("edit-tipo").value = btn.dataset.tipo;
+            document.getElementById("edit-quantidade").value = btn.dataset.quantidade;
+
+            modalEditarHist.style.display = "flex";
+        });
+    });
+
+    // Fechar modal ao clicar no X
+    fecharEditarHist.addEventListener("click", () => {
+        modalEditarHist.style.display = "none";
+    });
+
+    // Fechar modal ao clicar fora
+    window.addEventListener("click", (e) => {
+        if (e.target === modalEditarHist) modalEditarHist.style.display = "none";
+    });
+});
 </script>
 
 </body>

@@ -128,7 +128,7 @@ if (!$resultado) {
         <div id="modalNovoItem" class="modal">
         <div class="modal-content">
             <span class="fechar">&times;</span>
-            <h2>🆕 Novo Item</h2>
+            <h2> Novo Item</h2>
             <form id="formNovoItem" method="POST" action="salvar_item.php">
             <div class="grupo-input">
                 <label>Nome do Item</label>
@@ -218,65 +218,65 @@ if (!$resultado) {
         </div>
         <!-- ===== FIM MODAL EDITAR ITEM ===== -->
 
-             <script>
-document.addEventListener("DOMContentLoaded", function() {
-    const botoesExcluir = document.querySelectorAll(".btn-excluir");
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    const botoesExcluir = document.querySelectorAll(".btn-excluir");
 
-    botoesExcluir.forEach(botao => {
-        botao.addEventListener("click", function(e) {
-            e.preventDefault();
-            const id = this.dataset.id;
-            const nome = this.dataset.nome;
-            const linha = this.closest("tr");
+                    botoesExcluir.forEach(botao => {
+                        botao.addEventListener("click", function(e) {
+                            e.preventDefault();
+                            const id = this.dataset.id;
+                            const nome = this.dataset.nome;
+                            const linha = this.closest("tr");
 
-            Swal.fire({
-                title: "Tem certeza?",
-                text: `Deseja excluir o item "${nome}"?`,
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#d33",
-                cancelButtonColor: "#3085d6",
-                confirmButtonText: "Sim, excluir",
-                cancelButtonText: "Cancelar"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    fetch("excluir_item.php", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                        body: "id=" + encodeURIComponent(id)
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
                             Swal.fire({
-                                icon: "success",
-                                title: "Item excluído!",
-                                text: `"${nome}" foi removido com sucesso.`,
-                                showConfirmButton: false,
-                                timer: 1800
+                                title: "Tem certeza?",
+                                text: `Isso irá excluir tudo relacionado ao item "${nome}"?`,
+                                icon: "warning",
+                                showCancelButton: true,
+                                confirmButtonColor: "#d33",
+                                cancelButtonColor: "#3085d6",
+                                confirmButtonText: "Sim, excluir",
+                                cancelButtonText: "Cancelar"
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    fetch("excluir_item.php", {
+                                        method: "POST",
+                                        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                                        body: "id=" + encodeURIComponent(id)
+                                    })
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        if (data.success) {
+                                            Swal.fire({
+                                                icon: "success",
+                                                title: "Item excluído!",
+                                                text: `"${nome}" foi removido com sucesso.`,
+                                                showConfirmButton: false,
+                                                timer: 1800
+                                            });
+                                            linha.remove(); // remove a linha da tabela
+                                        } else {
+                                            Swal.fire({
+                                                icon: "error",
+                                                title: "Erro ao excluir",
+                                                text: data.error || "Não foi possível excluir o item."
+                                            });
+                                        }
+                                    })
+                                    .catch(() => {
+                                        Swal.fire({
+                                            icon: "error",
+                                            title: "Erro de conexão",
+                                            text: "Não foi possível comunicar com o servidor."
+                                        });
+                                    });
+                                }
                             });
-                            linha.remove(); // remove a linha da tabela
-                        } else {
-                            Swal.fire({
-                                icon: "error",
-                                title: "Erro ao excluir",
-                                text: data.error || "Não foi possível excluir o item."
-                            });
-                        }
-                    })
-                    .catch(() => {
-                        Swal.fire({
-                            icon: "error",
-                            title: "Erro de conexão",
-                            text: "Não foi possível comunicar com o servidor."
                         });
                     });
-                }
-            });
-        });
-    });
-});
-</script>
+                });
+            </script>
 
 
         <script>
