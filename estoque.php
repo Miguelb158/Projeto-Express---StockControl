@@ -177,55 +177,47 @@ if (!$resultado) {
         </div>
         </div>
         <!-- ===== FIM MODAL NOVO ITEM ===== -->
-        <!-- ===== MODAL EDITAR ITEM ===== -->
-            <div id="modalEditarItem" class="modal">
+        <!-- ===== MODAL EDITAR ITEM ===== --> 
+        <div id="modalEditarItem" class="modal">
             <div class="modal-content">
                 <span class="fechar fechar-editar">&times;</span>
                 <h2>✏️ Editar Item</h2>
                 <form id="formEditarItem" method="POST" action="editar_item_salvar.php">
-                <input type="hidden" name="id" id="edit-id">
+                    <input type="hidden" name="id" id="edit-id">
 
-                <div class="grupo-input">
-                    <label>Nome do Item</label>
-                    <input type="text" name="nome" id="edit-nome" required>
-                </div>
+                    <div class="grupo-input">
+                        <label>Nome do Item</label>
+                        <input type="text" name="nome" id="edit-nome" required>
+                    </div>
 
-                <div class="grupo-input">
-                    <label>Código</label>
-                    <input type="text" name="codigo" id="edit-codigo" required>
-                </div>
+                    <div class="grupo-input">
+                        <label>Categoria</label>
+                        <select name="categoria" id="edit-categoria" required>
+                            <option value="">Selecione...</option>
+                            <option value="cozinha">Cozinha</option>
+                            <option value="quarto">Quarto</option>
+                            <option value="sala de estar">Sala de estar</option>
+                            <option value="banheiro">Banheiro</option>
+                            <option value="escritorio">Escritório</option>
+                            <option value="garagem">Garagem</option>
+                        </select>
+                    </div>
 
-                <div class="grupo-input">
-                  <label>Categoria</label>
-                  <select name="categoria" id="edit-categoria" required>
-                    <option value="">Selecione...</option>
-                    <option value="cozinha">Cozinha</option>
-                    <option value="quarto">Quarto</option>
-                    <option value="sala de estar">Sala de estar</option>
-                    <option value="banheiro">Banheiro</option>
-                    <option value="escritorio">Escritório</option>
-                    <option value="garagem">Garagem</option>
-                  </select>
-                </div>
-                <div class="grupo-input">
-                    <label>Quantidade</label>
-                    <input type="number" name="quantidade" id="edit-quantidade" min="0">
-                </div>
+                    <div class="grupo-input">
+                        <label>Localização</label>
+                        <select name="localizacao" id="edit-localizacao" required>
+                            <option value="Setor A">Setor A</option>
+                            <option value="Setor B">Setor B</option>
+                            <option value="Setor C">Setor C</option>
+                        </select>
+                    </div>
 
-                <div class="grupo-input">
-                    <label>Localização</label>
-                    <select name="localizacao" id="edit-localizacao" required>
-                    <option value="Setor A">Setor A</option>
-                    <option value="Setor B">Setor B</option>
-                    <option value="Setor C">Setor C</option>
-                    </select>
-                </div>
-
-                <button type="submit" class="btn-salvar">Salvar Alterações</button>
+                    <button type="submit" class="btn-salvar">Salvar Alterações</button>
                 </form>
             </div>
-            </div>
-            <!-- ===== FIM MODAL EDITAR ITEM ===== -->
+        </div>
+        <!-- ===== FIM MODAL EDITAR ITEM ===== -->
+
              <script>
 document.addEventListener("DOMContentLoaded", function() {
     const botoesExcluir = document.querySelectorAll(".btn-excluir");
@@ -313,76 +305,71 @@ document.addEventListener("DOMContentLoaded", function() {
         </script>
         <script>
             document.addEventListener("DOMContentLoaded", function() {
-                // ======== MODAL EDITAR ITEM ========
-                const modalEditar = document.getElementById("modalEditarItem");
-                const fecharEditar = document.querySelector(".fechar-editar");
+            const modalEditar = document.getElementById("modalEditarItem");
+            const fecharEditar = document.querySelector(".fechar-editar");
 
-                document.querySelectorAll(".btn-editar").forEach(btn => {
-                    btn.addEventListener("click", (e) => {
-                        e.preventDefault();
+            document.querySelectorAll(".btn-editar").forEach(btn => {
+                btn.addEventListener("click", (e) => {
+                    e.preventDefault();
 
-                        // Preenche os campos do modal com os dados do botão
-                        document.getElementById("edit-id").value = btn.dataset.id;
-                        document.getElementById("edit-nome").value = btn.dataset.nome;
-                        document.getElementById("edit-codigo").value = btn.dataset.codigo;
-                        document.getElementById("edit-categoria").value = btn.dataset.categoria;
-                        document.getElementById("edit-quantidade").value = btn.dataset.quantidade;
-                        document.getElementById("edit-localizacao").value = btn.dataset.localizacao;
+                    // Preenche apenas os campos que existem no modal
+                    document.getElementById("edit-id").value = btn.dataset.id;
+                    document.getElementById("edit-nome").value = btn.dataset.nome;
+                    document.getElementById("edit-categoria").value = btn.dataset.categoria;
+                    document.getElementById("edit-localizacao").value = btn.dataset.localizacao;
 
-                        // Mostra o modal
-                        modalEditar.style.display = "flex";
-                    });
-                });
-
-                // Fechar modal ao clicar no X
-                fecharEditar.addEventListener("click", () => {
-                    modalEditar.style.display = "none";
-                });
-
-                // Fechar modal ao clicar fora
-                window.addEventListener("click", (e) => {
-                    if (e.target === modalEditar) modalEditar.style.display = "none";
+                    // Mostra o modal
+                    modalEditar.style.display = "flex";
                 });
             });
+
+            fecharEditar.addEventListener("click", () => {
+                modalEditar.style.display = "none";
+            });
+
+            window.addEventListener("click", (e) => {
+                if (e.target === modalEditar) modalEditar.style.display = "none";
+            });
+        });
             </script>
             <script>
-document.addEventListener("DOMContentLoaded", function() {
-    const tabela = document.querySelector(".tabela-estoque tbody");
-    const linhas = Array.from(tabela.querySelectorAll("tr")).filter(l => l.cells.length > 1);
+                    document.addEventListener("DOMContentLoaded", function() {
+                        const tabela = document.querySelector(".tabela-estoque tbody");
+                        const linhas = Array.from(tabela.querySelectorAll("tr")).filter(l => l.cells.length > 1);
 
-    const inputPesquisa = document.getElementById("campo-pesquisa"); // usa o ID do seu input!
-    const btnFiltrar = document.getElementById("btn-filtrar");
+                        const inputPesquisa = document.getElementById("campo-pesquisa"); // usa o ID do seu input!
+                        const btnFiltrar = document.getElementById("btn-filtrar");
 
-    function filtrarTabela() {
-        const filtro = inputPesquisa.value.toLowerCase();
-        linhas.forEach(linha => {
-            if (linha.cells.length === 1) return;
-            const codigo = linha.cells[0].textContent.toLowerCase();
-            const categoria = linha.cells[1].textContent.toLowerCase();
-            const nome = linha.cells[2].textContent.toLowerCase();
+                        function filtrarTabela() {
+                            const filtro = inputPesquisa.value.toLowerCase();
+                            linhas.forEach(linha => {
+                                if (linha.cells.length === 1) return;
+                                const codigo = linha.cells[0].textContent.toLowerCase();
+                                const categoria = linha.cells[1].textContent.toLowerCase();
+                                const nome = linha.cells[2].textContent.toLowerCase();
 
-            if (codigo.includes(filtro) || categoria.includes(filtro) || nome.includes(filtro)) {
-                linha.style.display = "";
-            } else {
-                linha.style.display = "none";
-            }
-        });
-    }
+                                if (codigo.includes(filtro) || categoria.includes(filtro) || nome.includes(filtro)) {
+                                    linha.style.display = "";
+                                } else {
+                                    linha.style.display = "none";
+                                }
+                            });
+                        }
 
-  
-    inputPesquisa.addEventListener("keyup", filtrarTabela);
-    btnFiltrar.addEventListener("click", filtrarTabela);
+                    
+                        inputPesquisa.addEventListener("keyup", filtrarTabela);
+                        btnFiltrar.addEventListener("click", filtrarTabela);
 
-  
-    const params = new URLSearchParams(window.location.search);
-    const categoriaURL = params.get("categoria");
+                    
+                        const params = new URLSearchParams(window.location.search);
+                        const categoriaURL = params.get("categoria");
 
-    if (categoriaURL) {
-        inputPesquisa.value = categoriaURL;
-        filtrarTabela();
-    }
-});
-</script>
+                        if (categoriaURL) {
+                            inputPesquisa.value = categoriaURL;
+                            filtrarTabela();
+                        }
+                    });
+            </script>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     </main>
 </div>

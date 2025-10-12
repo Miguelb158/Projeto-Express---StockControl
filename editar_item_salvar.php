@@ -1,20 +1,27 @@
-<?php
+<?php 
 include('conexao.php');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $id = $_POST['id'];
-    $nome = $_POST['nome'];
-    $codigo = $_POST['codigo'];
+    $id = intval($_POST['id']);  // garante que seja número
+    $nome = trim($_POST['nome']);
     $categoria = $_POST['categoria'];
-    $quantidade = $_POST['quantidade'];
     $localizacao = $_POST['localizacao'];
 
+    $sql_atual = "SELECT codigo, quantidade FROM itens WHERE id = ?";
+    $stmt_atual = $conn->prepare($sql_atual);
+    $stmt_atual->bind_param("i", $id);
+    $stmt_atual->execute();
+    $resultado = $stmt_atual->get_result()->fetch_assoc();
+    $codigo = $resultado['codigo'];
+    $quantidade = $resultado['quantidade'];
+    $stmt_atual->close();
+    
     $sql = "UPDATE itens 
-            SET nome = ?, codigo = ?, categoria = ?, quantidade = ?, localizacao = ?
+            SET nome = ?, categoria = ?, localizacao = ?
             WHERE id = ?";
     
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("sssisi", $nome, $codigo, $categoria, $quantidade, $localizacao, $id);
+    $stmt->bind_param("sssi", $nome, $categoria, $localizacao, $id);
 
     if ($stmt->execute()) {
         echo "<script>alert('✅ Item atualizado com sucesso!'); window.location.href='estoque.php';</script>";
