@@ -43,6 +43,70 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao']) && $_POST['ac
     header("Location: ver_item.php?id=" . $id_item);
     exit;
 }
+// ===== PROCESSA MOVIMENTAÇÃO =====
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['tipo'])) {
+    $tipo = $_POST['tipo']; // entrada ou saida
+    $quantidade = intval($_POST['quantidade']);
+    $data = $_POST['data'] ?? date("Y-m-d H:i:s");
+    $responsavel_id = intval($_SESSION['usuario_id']);
+    $observacoes = null; // opcional
+
+    // busca quantidade atual
+    $stmt_q = $conn->prepare("SELECT quantidade FROM itens WHERE id = ?");
+    $stmt_q->bind_param("i", $id_item);
+    $stmt_q->execute();
+    $res_q = $stmt_q->get_result();
+    $item_atual = $res_q->fetch_assoc();
+    $qtd_atual = $item_atual['quantidade'] ?? 0;
+
+    // valida quantidade
+    if ($quantidade <= 0) {
+        $erro_mov = "Quantidade inválida.";
+    } elseif ($tipo === 'saida' && $quantidade > $qtd_atual) {
+        $erro_mov = "Não é possível remover mais do que a quantidade atual ($qtd_atual).";
+    } else {
+        // iniciar transação
+        $conn->begin_transaction();
+
+        try {
+            if ($tipo === 'entrada') {
+                // insere entrada
+                $stmt = $conn->prepare("INSERT INTO entradas (item_id, quantidade, data_entrada, responsavel_id) VALUES (?, ?, ?, ?)");
+                $stmt->bind_param("iisi", $id_item, $quantidade, $data, $responsavel_id);
+                $stmt->execute();
+
+                // atualiza quantidade
+                $stmt2 = $conn->prepare("UPDATE itens SET quantidade = quantidade + ? WHERE id = ?");
+                $stmt2->bind_param("ii", $quantidade, $id_item);
+                $stmt2->execute();
+            } else {
+                // insere saída
+                $stmt = $conn->prepare("INSERT INTO saidas (item_id, quantidade, data_saida, responsavel_id) VALUES (?, ?, ?, ?)");
+                $stmt->bind_param("iisi", $id_item, $quantidade, $data, $responsavel_id);
+                $stmt->execute();
+
+                // atualiza quantidade
+                $stmt2 = $conn->prepare("UPDATE itens SET quantidade = quantidade - ? WHERE id = ?");
+                $stmt2->bind_param("ii", $quantidade, $id_item);
+                $stmt2->execute();
+            }
+
+            // registra no histórico
+            $stmt3 = $conn->prepare("INSERT INTO historico (tipo, item_id, quantidade, responsavel_id, data_movimentacao) VALUES (?, ?, ?, ?, ?)");
+            $stmt3->bind_param("siiss", $tipo, $id_item, $quantidade, $responsavel_id, $data);
+            $stmt3->execute();
+
+            $conn->commit();
+
+            // redireciona para atualizar a página e fechar o modal
+            header("Location: ver_item.php?id=" . $id_item);
+            exit;
+        } catch (Exception $e) {
+            $conn->rollback();
+            $erro_mov = "Erro ao salvar movimentação: " . $e->getMessage();
+        }
+    }
+}
 
 // =========================
 // BUSCA OS DADOS DO ITEM
@@ -139,7 +203,40 @@ if ($stmt_com) {
     <div class="detalhes-grid">
         <!-- ===== TABELA HISTÓRICO ===== -->
         <section class="tabela-historico">
-            <h2>Histórico</h2>
+            <?php if (!empty($erro_mov)): ?>
+                <div style="color:red; margin-bottom:10px; font-weight:bold;">
+                    <?= htmlspecialchars($erro_mov) ?>
+                </div>
+            <?php endif; ?>
+            <div class="titulo-historico">
+                <h2>Histórico</h2>
+                <img id="btnAddMov" src="./img/add.png" alt="Adicionar" class="btn-icone">
+            </div>
+
+
+                <!-- Modal -->
+                <div id="modalMov" class="modal">
+                    <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <h3>Nova Movimentação</h3>
+                        <form method="post" name="movimentacao">
+                            <label for="tipo">Tipo:</label>
+                            <select id="tipo" name="tipo" required>
+                                <option value="entrada">Entrada</option>
+                                <option value="saida">Saída</option>
+                            </select>
+
+                            <label for="data">Data:</label>
+                            <input type="date" id="data" name="data" required>
+
+                            <label for="quantidade">Quantidade:</label>
+                            <input type="number" id="quantidade" name="quantidade" min="1" required>
+
+                            <button type="submit">Salvar</button>
+                        </form>
+
+                    </div>
+                </div>
             <table>
                 <thead>
                     <tr>
@@ -194,5 +291,15 @@ if ($stmt_com) {
     </div>
 </main>
 </div>
+<script>
+const modal = document.getElementById('modalMov');
+const btn = document.getElementById('btnAddMov');
+const span = document.querySelector('.modal .close');
+
+btn.onclick = () => modal.style.display = 'block';
+span.onclick = () => modal.style.display = 'none';
+window.onclick = (e) => { if (e.target == modal) modal.style.display = 'none'; }
+</script>
+
 </body>
 </html>
