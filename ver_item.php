@@ -1,7 +1,10 @@
 <?php
 session_start();
+
+// ===== CONEXÃO COM O BANCO =====
 include('conexao.php');
 
+// ===== VERIFICA LOGIN =====
 if (!isset($_SESSION['usuario_id'])) {
     header("Location: index.php");
     exit;
@@ -11,13 +14,35 @@ $usuario_nome  = $_SESSION['usuario_nome'] ?? 'Usuário';
 $usuario_email = $_SESSION['usuario_email'] ?? '---';
 $usuario_tipo  = $_SESSION['usuario_tipo'] ?? 'funcionario';
 
-// Verifica se foi passado um ID na URL
+// ===== VERIFICA SE FOI PASSADO UM ID DE ITEM =====
 if (!isset($_GET['id']) || empty($_GET['id'])) {
     header("Location: estoque.php");
     exit;
 }
 
 $id_item = intval($_GET['id']);
+
+// ====== PROCESSA ENVIO DE COMENTÁRIO ======
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao']) && $_POST['acao'] === 'comentar') {
+    $usuario_id = intval($_SESSION['usuario_id']);
+    $texto = trim($_POST['comentario'] ?? '');
+
+    if ($texto !== '') {
+        $sql_ins = "INSERT INTO comentarios (item_id, usuario_id, texto) VALUES (?, ?, ?)";
+        $stmt_ins = $conn->prepare($sql_ins);
+        if ($stmt_ins) {
+            $stmt_ins->bind_param("iis", $id_item, $usuario_id, $texto);
+            $stmt_ins->execute();
+            $stmt_ins->close();
+        } else {
+            error_log("Erro prepare insert comentario: " . $conn->error);
+        }
+    }
+
+    // Evita reenvio de formulário no refresh
+    header("Location: ver_item.php?id=" . $id_item);
+    exit;
+}
 
 // =========================
 // BUSCA OS DADOS DO ITEM
@@ -29,7 +54,6 @@ $sql_item = "SELECT i.id, i.codigo, i.nome, i.categoria, i.quantidade, i.localiz
              WHERE i.id = ?";
 
 $stmt = $conn->prepare($sql_item);
-
 if (!$stmt) {
     die("Erro na preparação da query: " . $conn->error);
 }
@@ -58,7 +82,25 @@ $stmt_hist->bind_param("i", $id_item);
 $stmt_hist->execute();
 $historico = $stmt_hist->get_result();
 
+// =========================
+// BUSCA OS COMENTÁRIOS
+// =========================
+$sql_com = "SELECT c.id, c.texto, c.criado_em, c.usuario_id, u.nome AS usuario_nome
+            FROM comentarios c
+            LEFT JOIN usuarios u ON c.usuario_id = u.id
+            WHERE c.item_id = ?
+            ORDER BY c.criado_em DESC";
+
+$stmt_com = $conn->prepare($sql_com);
+if ($stmt_com) {
+    $stmt_com->bind_param("i", $id_item);
+    $stmt_com->execute();
+    $comentarios = $stmt_com->get_result();
+} else {
+    $comentarios = false;
+}
 ?>
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -86,14 +128,16 @@ $historico = $stmt_hist->get_result();
 
     <!-- Conteúdo -->
     <main class="conteudo">
-        <header class="topo">
-            <h1>Detalhes do Item <span style="color: gray;"> / <?= htmlspecialchars($item['nome']) ?></span></h1>
-            <div class="usuario-info">
-                <strong><?= htmlspecialchars($usuario_nome) ?></strong><br>
-                <small><?= htmlspecialchars($usuario_email) ?></small>
-            </div>
-        </header>
+    <header class="topo">
+        <h1>Detalhes do Item <span style="color: gray;"> / <?= htmlspecialchars($item['nome']) ?></span></h1>
+        <div class="usuario-info">
+            <strong><?= htmlspecialchars($usuario_nome) ?></strong><br>
+            <small><?= htmlspecialchars($usuario_email) ?></small>
+        </div>
+    </header>
 
+    <div class="detalhes-grid">
+        <!-- ===== TABELA HISTÓRICO ===== -->
         <section class="tabela-historico">
             <h2>Histórico</h2>
             <table>
@@ -116,8 +160,39 @@ $historico = $stmt_hist->get_result();
                     <?php endwhile; ?>
                 </tbody>
             </table>
+
+            <div class="qtd-atual">Qtd. atual: <?= htmlspecialchars($item['quantidade']) ?></div>
         </section>
-    </main>
+
+        <!-- ===== OBSERVAÇÕES / COMENTÁRIOS ===== -->
+        <section class="observacoes">
+            <h2>Observações</h2>
+
+            <div class="comentarios-lista" role="log" aria-live="polite">
+                <?php if ($comentarios && $comentarios->num_rows > 0): ?>
+                    <?php while ($c = $comentarios->fetch_assoc()): ?>
+                        <div class="box-observacao">
+                            <strong><?= htmlspecialchars($c['usuario_nome'] ?? 'Usuário') ?></strong>
+                            <p><?= nl2br(htmlspecialchars($c['texto'])) ?></p>
+                            <small><?= date("d/m/Y H:i", strtotime($c['criado_em'])) ?></small>
+                        </div>
+                    <?php endwhile; ?>
+                <?php else: ?>
+                    <div class="box-observacao">
+                        <p>Nenhum comentário ainda. Seja o primeiro a comentar.</p>
+                    </div>
+                <?php endif; ?>
+            </div>
+
+            <form class="comentar" method="post" action="">
+                <input type="hidden" name="acao" value="comentar">
+                <textarea name="comentario" placeholder="Adicionar comentário..." rows="3" required></textarea>
+                <button type="submit">Comentar</button>
+            </form>
+        </section>
+
+    </div>
+</main>
 </div>
 </body>
 </html>
