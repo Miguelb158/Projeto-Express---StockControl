@@ -1,0 +1,188 @@
+/* ===== CONTEÚDO PRINCIPAL ===== */
+.conteudo {
+    flex: 1;
+    padding: 30px;
+    background-color: #f6f6f6;
+    height: 100vh;
+    overflow-y: auto;
+}
+
+/* ===== CABEÇALHO ===== */
+.topo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    padding: 15px 25px;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+    margin-bottom: 25px;
+}
+
+.topo h1 {
+    margin: 0;
+    font-size: 24px;
+    color: #2b824a;
+}
+
+.topo h1 span {
+    font-size: 20px;
+    color: gray;
+    font-weight: normal;
+}
+
+.usuario-info {
+    text-align: right;
+    font-size: 14px;
+}
+
+/* ===== ÁREA PRINCIPAL: HISTÓRICO E OBSERVAÇÕES ===== */
+.tabela-historico {
+    background: #fff;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+}
+
+.tabela-historico h2 {
+    color: #2b824a;
+    margin-bottom: 15px;
+}
+
+.tabela-historico table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+}
+
+.tabela-historico th {
+    text-align: center;
+    padding: 12px;
+    color: #2e7d32;
+    font-size: 15px;
+    border-bottom: 2px solid #e0e0e0;
+    background: #f9fdf9;
+}
+
+.tabela-historico td {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+    text-align: center;
+    color: #444;
+}
+
+.tabela-historico tr:hover {
+    background: #f9fff9;
+}
+
+/* ===== LAYOUT LADO A LADO ===== */
+main.conteudo {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.detalhes-grid {
+    display: grid;
+    grid-template-columns: 2fr 1.2fr;
+    gap: 25px;
+}
+
+.observacoes {
+    background: #fff;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+}
+
+.observacoes h2 {
+    color: #2b824a;
+    margin-bottom: 15px;
+}
+
+/* ===== BLOCO DE OBSERVAÇÕES ===== */
+.box-observacao {
+    background: #f6f6f6;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 12px;
+    border: 1px solid #ddd;
+}
+
+.box-observacao strong {
+    color: #2b824a;
+    display: block;
+    margin-bottom: 4px;
+    font-size: 14px;
+}
+
+.box-observacao p {
+    font-size: 14px;
+    color: #333;
+    margin: 4px 0;
+}
+
+.box-observacao small {
+    display: block;
+    text-align: right;
+    color: #777;
+    font-size: 12px;
+}
+
+/* ===== COMENTAR ===== */
+.comentar {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+    gap: 10px;
+}
+
+.comentar textarea {
+    flex: 1;
+    resize: none;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 8px;
+    font-size: 14px;
+    outline: none;
+}
+
+.comentar textarea:focus {
+    border-color: #4caf50;
+}
+
+.comentar button {
+    background: #4caf50;
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+
+.comentar button:hover {
+    background: #388e3c;
+}
+
+/* ===== RODAPÉ QUANTIDADE ATUAL ===== */
+.qtd-atual {
+    text-align: right;
+    color: #2b824a;
+    font-weight: bold;
+    margin-top: 15px;
+    font-size: 16px;
+}
+
+/* ===== RESPONSIVIDADE ===== */
+@media (max-width: 900px) {
+    .detalhes-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .tabela-historico th,
+    .tabela-historico td {
+        font-size: 13px;
+    }
+}
