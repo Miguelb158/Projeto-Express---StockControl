@@ -141,8 +141,16 @@ if (!$resultado) {
             </div>
 
             <div class="grupo-input">
-                <label>Categoria</label>
-                <input type="text" name="categoria">
+              <label>Categoria</label>
+              <select name="categoria" required>
+                <option value="">Selecione...</option>
+                <option value="cozinha">Cozinha</option>
+                <option value="quarto">Quarto</option>
+                <option value="sala de estar">Sala de estar</option>
+                <option value="banheiro">Banheiro</option>
+                <option value="escritorio">Escritório</option>
+                <option value="garagem">Garagem</option>
+              </select>
             </div>
 
             <div class="grupo-input">
@@ -188,10 +196,17 @@ if (!$resultado) {
                 </div>
 
                 <div class="grupo-input">
-                    <label>Categoria</label>
-                    <input type="text" name="categoria" id="edit-categoria">
+                  <label>Categoria</label>
+                  <select name="categoria" id="edit-categoria" required>
+                    <option value="">Selecione...</option>
+                    <option value="cozinha">Cozinha</option>
+                    <option value="quarto">Quarto</option>
+                    <option value="sala de estar">Sala de estar</option>
+                    <option value="banheiro">Banheiro</option>
+                    <option value="escritorio">Escritório</option>
+                    <option value="garagem">Garagem</option>
+                  </select>
                 </div>
-
                 <div class="grupo-input">
                     <label>Quantidade</label>
                     <input type="number" name="quantidade" id="edit-quantidade" min="0">
@@ -310,7 +325,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         document.getElementById("edit-id").value = btn.dataset.id;
                         document.getElementById("edit-nome").value = btn.dataset.nome;
                         document.getElementById("edit-codigo").value = btn.dataset.codigo;
-                        document.getElementById("edit-categoria").value = btn.dataset.categoria;
+                        document.getElementById("edit-categoria").value = item.categoria;
                         document.getElementById("edit-quantidade").value = btn.dataset.quantidade;
                         document.getElementById("edit-localizacao").value = btn.dataset.localizacao;
 
@@ -330,6 +345,44 @@ document.addEventListener("DOMContentLoaded", function() {
                 });
             });
             </script>
+            <script>
+document.addEventListener("DOMContentLoaded", function() {
+    const tabela = document.querySelector(".tabela-estoque tbody");
+    const linhas = Array.from(tabela.querySelectorAll("tr")).filter(l => l.cells.length > 1);
+
+    const inputPesquisa = document.getElementById("campo-pesquisa"); // usa o ID do seu input!
+    const btnFiltrar = document.getElementById("btn-filtrar");
+
+    function filtrarTabela() {
+        const filtro = inputPesquisa.value.toLowerCase();
+        linhas.forEach(linha => {
+            if (linha.cells.length === 1) return;
+            const codigo = linha.cells[0].textContent.toLowerCase();
+            const categoria = linha.cells[1].textContent.toLowerCase();
+            const nome = linha.cells[2].textContent.toLowerCase();
+
+            if (codigo.includes(filtro) || categoria.includes(filtro) || nome.includes(filtro)) {
+                linha.style.display = "";
+            } else {
+                linha.style.display = "none";
+            }
+        });
+    }
+
+  
+    inputPesquisa.addEventListener("keyup", filtrarTabela);
+    btnFiltrar.addEventListener("click", filtrarTabela);
+
+  
+    const params = new URLSearchParams(window.location.search);
+    const categoriaURL = params.get("categoria");
+
+    if (categoriaURL) {
+        inputPesquisa.value = categoriaURL;
+        filtrarTabela();
+    }
+});
+</script>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     </main>
 </div>
@@ -371,6 +424,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const tabela = document.querySelector(".tabela-estoque tbody");
     const linhas = Array.from(tabela.querySelectorAll("tr")).filter(l => l.cells.length > 1); // ignora mensagem "nenhum item"
     
+    const inputPesquisa = document.getElementById("input-pesquisa");
     const btnFiltrar = document.getElementById("btn-filtrar");
     const dropdown = document.getElementById("dropdown-categorias");
 

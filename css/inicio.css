@@ -6,12 +6,41 @@
 }
 
 .container {
-    display: flex;
-    height: 100vh;
+     display: flex;
+    justify-content: flex-start; /* 🔹 alinha para a esquerda */
+    align-items: center;
+    gap: 50px; /* 🔹 espaço entre o gráfico e os cards */
 }
+
+.topo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    padding: 15px 25px;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+    margin-bottom: 25px;
+}
+
+.topo h1 {
+    margin: 0;
+    font-size: 24px;
+    color: #2b824a;
+}
+
+.usuario-info {
+    text-align: right;
+    font-size: 14px;
+}
+
 
 /* ======= BARRA LATERAL ======= */
 .sidebar {
+    position: fixed;         /* 🔹 Fixa no lado esquerdo */
+    top: 0;
+    left: 0;
+    height: 100vh;
     width: 220px;
     background-color: #076531;
     color: white;
@@ -26,10 +55,12 @@
 
 /* Quando o mouse não estiver sobre a barra */
 .sidebar:hover {
+    height: 100%;
     width: 220px;
 }
 
 .sidebar:not(:hover) {
+    height: 100%;
     width: 70px;
 }
 
@@ -126,6 +157,8 @@
 
 /* ======= CONTEÚDO PRINCIPAL ======= */
 .conteudo {
+    margin-left: 70px;     
+    width: calc(100% - 70px);
     flex: 1;
     background-color: #f2f2f2;
     padding: 30px;
@@ -135,4 +168,68 @@
     color: #30b16a;
     font-size: 28px;
     margin-bottom: 20px;
+}
+body {
+    font-family: Arial, sans-serif;
+    background: #f3f3f3;
+    text-align: center;
+}
+h2 {
+    color: #38a169;
+}
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: start;
+    gap: 50px;
+}
+grafico-cards {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.grafico-container {
+  max-width: 350px;
+  height: 300px;
+}
+
+#grafico {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Cards em grid 2x2 */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 20px;
+  max-width: 400px;
+}
+
+.card {
+  background: #fff;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  transition: transform 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+}
+
+.card i {
+  font-size: 30px;
+  color: #2e7d32;
+  margin-bottom: 10px;
+}
+
+.valor {
+  font-size: 22px;
+  font-weight: bold;
+  color: #2e7d32;
 }
