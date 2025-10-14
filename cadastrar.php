@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $nome = trim($_POST['nome']);
     $email = trim($_POST['email']);
     $senha = trim($_POST['senha']);
-    $tipo = $_POST['tipo']; // admin ou funcionario
+    $tipo = 'funcionario';
 
     if (empty($nome) || empty($email) || empty($senha) || empty($tipo)) {
         $mensagem = "⚠️ Preencha todos os campos!";
@@ -72,11 +72,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <input type="text" name="nome" placeholder="Nome completo" required>
         <input type="email" name="email" placeholder="E-mail" required>
         <input type="password" name="senha" placeholder="Senha" required>
-        <select name="tipo" required>
-          <option value="">Selecione o tipo de usuário</option>
-          <option value="funcionario">Funcionário</option>
-          <option value="admin">Administrador</option>
-        </select>
         <button type="submit" class="btn-cadastrar">Cadastrar-se</button>
       </form>
     </div>

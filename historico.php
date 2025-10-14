@@ -35,6 +35,7 @@ $result = $conn->query($sql);
     <title>Página inicial</title>
     <link rel="stylesheet" href="./css/inicio.css">
     <link rel="stylesheet" href="./css/historico.css">
+    <link rel="stylesheet" href="./css/estoque.css">
 </head>
 <body>
     <div class="container">
@@ -46,15 +47,22 @@ $result = $conn->query($sql);
                 <ul class="menu">
                     <li><a href="./inicio.php"><img class="icone" src="./img/casa.png" alt=""> Início</a></li>
                     <li><a href="./estoque.php"><img class="icone" src="./img/caixa-aberta.png" alt=""> Estoque</a></li>
-                    <li><a href="#"><img class="icone" src="./img/do-utilizador.png" alt=""> Novo usuário</a></li>
-                    <li><a href="#"><img class="icone" src="./img/prancheta.png" alt=""> Histórico</a></li>
+                    <li><a href="./novo_usuario.php"><img class="icone" src="./img/do-utilizador.png" alt=""> Novo usuário</a></li>
+                    <li><a href="./hisorico.php"><img class="icone" src="./img/prancheta.png" alt=""> Histórico</a></li>
                 </ul>
                 
             </DIv>
             <a id="sair" href="index.php">< Sair</a>
         </nav>
-        <div class="container">
-        <h2>Histórico</h2>
+        <main class="conteudo">
+        <header class="topo">
+            <h1>Histórico</h1>
+            <div class="usuario-info">
+                <strong><?= htmlspecialchars($usuario_nome) ?></strong><br>
+                <small><?= htmlspecialchars($usuario_email) ?></small>
+            </div>
+        </header>
+            <div class="container2">
         <table>
             <thead>
                 <tr>
@@ -63,7 +71,6 @@ $result = $conn->query($sql);
                     <th>Item</th>
                     <th>Qtd.</th>
                     <th>Responsável</th>
-                    <th>Ações</th>
                 </tr>
             </thead>
             <tbody>
@@ -74,15 +81,11 @@ $result = $conn->query($sql);
                         <td><?= $row['item'] ?></td>
                         <td><?= $row['quantidade'] ?></td>
                         <td><?= $row['responsavel'] ?></td>
-                        <td class="acoes">
-                            <a href="editar.php?id=<?= $row['id'] ?>" class="edit">✏️</a>
-                            <a href="ver.php?id=<?= $row['id'] ?>" class="view">👁️</a>
-                            <a href="remover.php?id=<?= $row['id'] ?>" class="delete" onclick="return confirm('Tem certeza que deseja excluir?')">🗑️</a>
-                        </td>
                     </tr>
                 <?php } ?>
             </tbody>
         </table>
     </div>
+                </main>
 </body>
 </html>
