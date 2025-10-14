@@ -1,4 +1,4 @@
-<?php
+<?php 
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
@@ -7,15 +7,14 @@ $mensagem = '';
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     include('conexao.php'); 
 
-    $nome = trim($_POST['nome']);
+    $nome  = trim($_POST['nome']);
     $email = trim($_POST['email']);
     $senha = trim($_POST['senha']);
-    $tipo = 'funcionario';
+    $tipo  = 'funcionario'; 
 
-    if (empty($nome) || empty($email) || empty($senha) || empty($tipo)) {
+    if (empty($nome) || empty($email) || empty($senha)) {
         $mensagem = "⚠️ Preencha todos os campos!";
     } else {
-        // Verifica se o email já existe
         $verifica = $conn->prepare("SELECT id FROM usuarios WHERE email = ?");
         if (!$verifica) {
             die("Erro ao preparar verificação: " . $conn->error);
